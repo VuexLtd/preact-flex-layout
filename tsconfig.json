@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "jsx": "react",
+        "jsxFactory": "h",
+        "outDir": "dist",
+        "declaration": true,
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016.array.include"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "preact-flex-layout",
+  "version": "0.1.0",
+  "description": "Flexbox layout engine for preact. Based on angular material's layout engine.",
+  "main": "dist/index.js",
+  "typings": "dist/index",
+  "repository": "https://github.com/VuexLtd/preact-flex-layout",
+  "author": "James Birtles <james.birtles@vuex.io>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^2.1.5"
+  },
+  "peerDependencies": {
+    "preact": "^7.1.0"
+  }
+}
