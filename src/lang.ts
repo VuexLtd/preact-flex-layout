@@ -23,17 +23,34 @@ export function mediaProps(props: { [key: string]: any }, queryTracker: QueryTra
     return apparentProps;
 }
 
-export function mutateChildren(children: JSX.Element[], props: { [key: string]: any }) {
-    return children.map(child => cloneElement(child, props));
+export function mutateStyles(node: JSX.Element, styles: { [key: string]: string | number }): JSX.Element
+export function mutateStyles(node: JSX.Element[], styles: { [key: string]: string | number }): JSX.Element[]
+export function mutateStyles(node: JSX.Element | JSX.Element[], styles: { [key: string]: string | number }): JSX.Element | JSX.Element[] {
+    return mutateWithPredicate(node as any, props => ({ style: { ...props.style, ...styles } }));
 }
 
-export function mutateStylesOnChildren(children: JSX.Element[], styles: { [key: string]: string | number }) {
-    return children.map(child => {
-        if (!child.nodeName) {
-            return child;
-        }
+export function mutateWithPredicate(node: JSX.Element, predicate: (props: any) => any): JSX.Element
+export function mutateWithPredicate(node: JSX.Element[], predicate: (props: any) => any): JSX.Element[]
+export function mutateWithPredicate(node: JSX.Element | JSX.Element[], predicate: (props: any) => any): JSX.Element | JSX.Element[] {
+    if (Array.isArray(node)) {
+        return node.map(child => mutateWithPredicate(child, predicate));
+    }
 
-        const attrs = child.attributes || {};
-        return cloneElement(child, { style: {...attrs['style'], ...styles} })
-    });
+    if (!node.nodeName) {
+        // Probably a text node.
+        return node;
+    }
+
+    const props = node.attributes || {};
+    return mutateElement(node, predicate(props) || {});
+}
+
+export function mutateElement(node: JSX.Element, props: any): JSX.Element
+export function mutateElement(node: JSX.Element[], props: any): JSX.Element[]
+export function mutateElement(node: JSX.Element | JSX.Element[], props: any): JSX.Element | JSX.Element[] {
+    if (Array.isArray(node)) {
+        return node.map(child => mutateElement(child, props));
+    }
+
+    return cloneElement(node, props);
 }

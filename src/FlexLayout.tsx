@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
 
 import { QueryTracker } from './QueryTracker';
-import { mediaProps, mutateStylesOnChildren } from './lang';
+import { mediaProps, mutateStyles, mutateWithPredicate } from './lang';
 
 export interface LayoutProps {
     style?: any;
+    inline?: boolean;
 
     align?: string;
     'xs-align'?: string;
@@ -89,8 +90,6 @@ class FlexLayout extends Component<LayoutProps, {}> {
     }
 
     public render() {
-        let { children } = this.props;
-
         const apparentProps = {
             align: this.props.align,
             column: !!this.props.column,
@@ -98,6 +97,7 @@ class FlexLayout extends Component<LayoutProps, {}> {
             nowrap: !!this.props.nowrap,
             padding: !!this.props.padding,
             margin: !!this.props.margin,
+            inline: !!this.props.inline,
             ...mediaProps(this.props, this.queryTracker),
         };
 
@@ -108,6 +108,7 @@ class FlexLayout extends Component<LayoutProps, {}> {
             nowrap,
             padding,
             margin,
+            inline,
         } = apparentProps;
 
         const style = {
@@ -115,6 +116,20 @@ class FlexLayout extends Component<LayoutProps, {}> {
             flexDirection: column ? 'column' : 'row',
             boxSizing: 'border-box',
         };
+
+        let host: JSX.Element;
+        if (inline) {
+            if (this.props.children.length !== 1) {
+                throw new Error('There must be exactly 1 child to an inline FlexLayout');
+            }
+            if (this.props.style) {
+                throw new Error('Inline FlexLayout does not support style input. Set them on the child directly.');
+            }
+
+            host = this.props.children[0];
+        } else {
+            host = <div style={this.props.style}>{ this.props.children }</div>
+        }
 
         if (align) {
             const [justify, alignment] = align.split(' ');
@@ -137,15 +152,15 @@ class FlexLayout extends Component<LayoutProps, {}> {
 
         if (padding) {
             style['padding'] = 8;
-            children = mutateStylesOnChildren(children, { padding: 8 });
+            host.children = mutateStyles(host.children, { padding: 8 });
         }
 
         if (margin) {
             style['margin'] = 8;
-            children = mutateStylesOnChildren(children, { margin: 8 });
+            host.children = mutateStyles(host.children, { margin: 8 });
         }
 
-        return <div style={{...style, ...this.props.style}}>{ children }</div>
+        return mutateStyles(host, style);
     }
 }
 
