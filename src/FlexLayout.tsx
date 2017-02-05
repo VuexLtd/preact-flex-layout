@@ -6,6 +6,7 @@ import { mediaProps, mutateStyles, mutateWithPredicate } from './lang';
 export interface LayoutProps {
     style?: any;
     inline?: boolean;
+    class?: string | { [key:string]: boolean };
 
     align?: string;
     'xs-align'?: string;
@@ -98,6 +99,7 @@ class FlexLayout extends Component<LayoutProps, {}> {
             padding: !!this.props.padding,
             margin: !!this.props.margin,
             inline: !!this.props.inline,
+            class: this.props.class,
             ...mediaProps(this.props, this.queryTracker),
         };
 
@@ -109,6 +111,7 @@ class FlexLayout extends Component<LayoutProps, {}> {
             padding,
             margin,
             inline,
+            class: className,
         } = apparentProps;
 
         const style = {
@@ -122,13 +125,10 @@ class FlexLayout extends Component<LayoutProps, {}> {
             if (this.props.children.length !== 1) {
                 throw new Error('There must be exactly 1 child to an inline FlexLayout');
             }
-            if (this.props.style) {
-                throw new Error('Inline FlexLayout does not support style input. Set them on the child directly.');
-            }
 
             host = this.props.children[0];
         } else {
-            host = <div style={this.props.style}>{ this.props.children }</div>
+            host = <div class={className} style={this.props.style}>{ this.props.children }</div>
         }
 
         if (align) {
