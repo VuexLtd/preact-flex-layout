@@ -1,6 +1,6 @@
 {
   "name": "preact-flex-layout",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Flexbox layout engine for preact. Based on angular material's layout engine.",
   "main": "dist/index.js",
   "typings": "dist/index",
